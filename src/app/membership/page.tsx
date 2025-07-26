@@ -6,7 +6,7 @@ import type { Variants } from "framer-motion";
 import Image from "next/image";
 import TrialBookingModal from "../../components/TrialBookingModal";
 import PricingToggle from "../../components/PricingToggle";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import emailjs from "emailjs-com";
 

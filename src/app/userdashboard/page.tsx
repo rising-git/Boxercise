@@ -1,25 +1,42 @@
-'use client';
+"use client";
 
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { Card, CardContent } from '../../components/ui/card';
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { db } from "@/src/lib/firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { Card, CardContent } from "../../components/ui/card";
+
+type Booking = {
+  id: string;
+  plan: string;
+  trainer: string;
+  date: string;
+  timeSlot: string;
+};
 
 export default function UserDashboard() {
   const { data: session } = useSession();
-  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
     const fetchBookings = async () => {
       if (session?.user?.email) {
         const q = query(
-          collection(db, 'bookings'),
-          where('userEmail', '==', session.user.email)
+          collection(db, "bookings"),
+          where("userEmail", "==", session.user.email)
         );
         const snapshot = await getDocs(q);
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const data = snapshot.docs.map((doc) => {
+          const docData = doc.data();
+          return {
+            id: doc.id,
+            plan: docData.plan ?? "",
+            trainer: docData.trainer ?? "",
+            date: docData.date ?? "",
+            timeSlot: docData.timeSlot ?? "",
+          };
+        });
         setBookings(data);
       }
     };
@@ -41,7 +58,9 @@ export default function UserDashboard() {
       transition={{ duration: 0.6 }}
       className="p-4 max-w-4xl mx-auto text-white"
     >
-      <h1 className="text-3xl font-bold mb-6">Welcome, {session.user?.name || 'User'}!</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        Welcome, {session.user?.name || "User"}!
+      </h1>
       <h2 className="text-xl font-semibold mb-4">Your Bookings</h2>
 
       {bookings.length === 0 ? (
@@ -57,10 +76,18 @@ export default function UserDashboard() {
             >
               <Card className="bg-gray-800 text-white border border-gray-700">
                 <CardContent className="p-4">
-                  <p><strong>Plan:</strong> {booking.plan}</p>
-                  <p><strong>Trainer:</strong> {booking.trainer}</p>
-                  <p><strong>Date:</strong> {booking.date}</p>
-                  <p><strong>Time:</strong> {booking.timeSlot}</p>
+                  <p>
+                    <strong>Plan:</strong> {booking.plan}
+                  </p>
+                  <p>
+                    <strong>Trainer:</strong> {booking.trainer}
+                  </p>
+                  <p>
+                    <strong>Date:</strong> {booking.date}
+                  </p>
+                  <p>
+                    <strong>Time:</strong> {booking.timeSlot}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -70,3 +97,4 @@ export default function UserDashboard() {
     </motion.div>
   );
 }
+

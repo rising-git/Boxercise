@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { db } from '@/lib/firebase';
+import React, { useEffect, useState } from "react";
+import { db } from "@/src/lib/firebase";
 import {
   collection,
   getDocs,
   doc,
   setDoc,
   Timestamp,
-} from 'firebase/firestore';
+} from "firebase/firestore";
 
 interface TrialBooking {
   id: string;
@@ -22,14 +22,16 @@ interface TrialBooking {
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState<TrialBooking[]>([]);
-  const [selectedClient, setSelectedClient] = useState<TrialBooking | null>(null);
-  const [notes, setNotes] = useState('');
-  const [milestone, setMilestone] = useState('');
-  const [plan, setPlan] = useState('');
+  const [selectedClient, setSelectedClient] = useState<TrialBooking | null>(
+    null
+  );
+  const [notes, setNotes] = useState("");
+  const [milestone, setMilestone] = useState("");
+  const [plan, setPlan] = useState("");
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const snapshot = await getDocs(collection(db, 'trialBookings'));
+      const snapshot = await getDocs(collection(db, "trialBookings"));
       const data = snapshot.docs.map((doc) => {
         const docData = doc.data();
         return {
@@ -52,7 +54,7 @@ const AdminDashboard = () => {
     if (!selectedClient) return;
 
     try {
-      await setDoc(doc(db, 'clients', selectedClient.id), {
+      await setDoc(doc(db, "clients", selectedClient.id), {
         name: selectedClient.name,
         email: selectedClient.email,
         plan,
@@ -61,20 +63,22 @@ const AdminDashboard = () => {
         updatedAt: Timestamp.now(),
       });
 
-      alert('✅ Client info updated!');
+      alert("✅ Client info updated!");
       setSelectedClient(null);
-      setPlan('');
-      setNotes('');
-      setMilestone('');
+      setPlan("");
+      setNotes("");
+      setMilestone("");
     } catch (err) {
       console.error(err);
-      alert('❌ Failed to update client');
+      alert("❌ Failed to update client");
     }
   };
 
   return (
     <section className="min-h-screen bg-gray-950 text-white p-20">
-      <h1 className="text-3xl font-bold text-red-500 mb-6">📋 Trial Bookings</h1>
+      <h1 className="text-3xl font-bold text-red-500 mb-6">
+        📋 Trial Bookings
+      </h1>
 
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-700">
@@ -91,22 +95,25 @@ const AdminDashboard = () => {
           </thead>
           <tbody>
             {bookings.map((b) => (
-              <tr key={b.id} className="border-t border-gray-700 hover:bg-gray-800 transition">
+              <tr
+                key={b.id}
+                className="border-t border-gray-700 hover:bg-gray-800 transition"
+              >
                 <td className="px-4 py-2">{b.name}</td>
                 <td className="px-4 py-2">{b.email}</td>
                 <td className="px-4 py-2">{b.phone}</td>
                 <td className="px-4 py-2">{b.time}</td>
                 <td className="px-4 py-2">{b.goal}</td>
                 <td className="px-4 py-2 text-sm text-gray-400">
-                  {b.createdAt?.toDate().toLocaleString() ?? '—'}
+                  {b.createdAt?.toDate().toLocaleString() ?? "—"}
                 </td>
                 <td className="px-4 py-2">
                   <button
                     onClick={() => {
                       setSelectedClient(b);
-                      setNotes('');
-                      setMilestone('');
-                      setPlan('');
+                      setNotes("");
+                      setMilestone("");
+                      setPlan("");
                     }}
                     className="text-blue-400 underline hover:text-blue-200"
                   >
@@ -136,7 +143,9 @@ const AdminDashboard = () => {
             >
               &times;
             </button>
-            <h2 className="text-xl font-bold mb-4">📝 Update Client: {selectedClient.name}</h2>
+            <h2 className="text-xl font-bold mb-4">
+              📝 Update Client: {selectedClient.name}
+            </h2>
 
             <input
               type="text"

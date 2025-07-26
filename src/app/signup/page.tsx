@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { FcGoogle } from 'react-icons/fc';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { FcGoogle } from "react-icons/fc";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-} from 'firebase/auth';
-import { app } from '@/lib/firebase';
+} from "firebase/auth";
+import { app } from "@/src/lib/firebase";
 
 const SignupPage = () => {
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
     agreed: false,
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
   const auth = getAuth(app);
 
@@ -28,34 +28,34 @@ const SignupPage = () => {
     setForm({
       ...form,
       [e.target.name]:
-        e.target.type === 'checkbox' ? e.target.checked : e.target.value,
+        e.target.type === "checkbox" ? e.target.checked : e.target.value,
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!form.name || !form.email || !form.password || !form.confirmPassword) {
-      return setError('Please fill all fields.');
+      return setError("Please fill all fields.");
     }
 
     if (!form.agreed) {
-      return setError('You must agree to terms and privacy policy.');
+      return setError("You must agree to terms and privacy policy.");
     }
 
     if (form.password !== form.confirmPassword) {
-      return setError('Passwords do not match.');
+      return setError("Passwords do not match.");
     }
 
     try {
       await createUserWithEmailAndPassword(auth, form.email, form.password);
-      router.push('/login');
+      router.push("/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred.');
+        setError("An unexpected error occurred.");
       }
     }
   };
@@ -64,12 +64,12 @@ const SignupPage = () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred.');
+        setError("An unexpected error occurred.");
       }
     }
   };
@@ -79,7 +79,7 @@ const SignupPage = () => {
       className="min-h-screen bg-[#020817] pt-24 flex items-center justify-center px-4 sm:px-6"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="w-full max-w-[95%] sm:max-w-md backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl rounded-2xl p-6 sm:p-8">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-6 sm:mb-8">
@@ -132,12 +132,18 @@ const SignupPage = () => {
               className="mt-1 accent-yellow-400"
             />
             <span>
-              I agree to the{' '}
-              <a href="/terms&Conditions" className="text-yellow-400 hover:underline">
+              I agree to the{" "}
+              <a
+                href="/terms&Conditions"
+                className="text-yellow-400 hover:underline"
+              >
                 Terms
-              </a>{' '}
-              and{' '}
-              <a href="/privacy&Policy" className="text-yellow-400 hover:underline">
+              </a>{" "}
+              and{" "}
+              <a
+                href="/privacy&Policy"
+                className="text-yellow-400 hover:underline"
+              >
                 Privacy Policy
               </a>
             </span>
@@ -161,7 +167,7 @@ const SignupPage = () => {
         </button>
 
         <p className="text-xs sm:text-sm text-center text-white mt-4">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <a href="/profile" className="text-orange-500 hover:underline">
             Login
           </a>

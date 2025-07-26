@@ -1,15 +1,29 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "../../../lib/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "../../lib/firebase";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  DocumentData,
+} from "firebase/firestore";
 
-
+// Define a type for your booking data
+type Booking = {
+  id: string;
+  plan?: string;
+  trainer?: string;
+  date?: string;
+  timeSlot?: string;
+  [key: string]: unknown; // for any additional fields
+};
 
 export default function MyBookings() {
   const [user] = useAuthState(auth);
-  const [bookings, setBookings] = useState<{ id: string }[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,9 +36,9 @@ export default function MyBookings() {
       );
 
       const snapshot = await getDocs(q);
-      const bookingData = snapshot.docs.map(doc => ({
+      const bookingData: Booking[] = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...(doc.data() as DocumentData),
       }));
       setBookings(bookingData);
       setLoading(false);
@@ -42,12 +56,20 @@ export default function MyBookings() {
         <p>No bookings found.</p>
       ) : (
         <ul className="space-y-4">
-          {bookings.map((booking: any) => (
+          {bookings.map((booking) => (
             <li key={booking.id} className="bg-gray-800 p-4 rounded-xl shadow">
-              <p><strong>Plan:</strong> {booking.plan}</p>
-              <p><strong>Trainer:</strong> {booking.trainer}</p>
-              <p><strong>Date:</strong> {booking.date}</p>
-              <p><strong>Time:</strong> {booking.timeSlot}</p>
+              <p>
+                <strong>Plan:</strong> {booking.plan ?? "N/A"}
+              </p>
+              <p>
+                <strong>Trainer:</strong> {booking.trainer ?? "N/A"}
+              </p>
+              <p>
+                <strong>Date:</strong> {booking.date ?? "N/A"}
+              </p>
+              <p>
+                <strong>Time:</strong> {booking.timeSlot ?? "N/A"}
+              </p>
             </li>
           ))}
         </ul>
